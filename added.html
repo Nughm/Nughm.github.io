@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+<head>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    
+    var socket = io.connect('http://192.168.148.42:5000');
+    
+    socket.on('connect', function() {
+        socket.send('User has connected!');
+    });
+    socket.on('message', function(msgs) {
+        $('#messages').prepend(msgs + "<br>");
+        console.log('Recieved message');
+    
+    });
+
+    $('#sendbutton').on('click', function() {
+        socket.emit('message', {
+            "name": $('#name').val(),
+            "number2": $('#number2').val(),
+        })
+        $('#number2').val('');
+    });
+    
+});
+</script>
+
+<div>
+    Your Name: {{name}}
+    <input type="hidden" id="name" name="name" value="{{name}}" readonly>
+    <br>
+    Enter a message
+<input type="text" id="number2" name="number2">
+<button id="sendbutton">Send</button>
+<br>
+Recent messages:
+<ul id="messages"></ul>
+Previously Saved messages:
+<br>
+<br>
+{{history | safe}}
+</html>
