@@ -6,11 +6,13 @@ Width, height = 1280, 720
 screen = pygame.display.set_mode((Width, height))
 screen.fill("White")
 clock = pygame.time.Clock()
+
+
 async def main():
     global Width, height
-    COUNT_DOWN = -100
+    count_down = -100
     #dot class
-    class dot():
+    class dot:
         def __init__(self, col):
             self.color = col
             self.phase = 0
@@ -23,8 +25,6 @@ async def main():
 
         def reset(self):
             self.color, self.phase, self.target, self.x, self.y, self.value = "Red", 0, None, -10, -10, ""
-
-
         def update(self):
             temp = base_font.render(str(self.value), True, "Black")
             temp_rect = temp.get_rect(center=(self.x, self.y))
@@ -509,10 +509,10 @@ async def main():
             pygame.display.update()
             await asyncio.sleep(0)  # Very important, and keep it 0
 
-            if not COUNT_DOWN:
+            if not count_down:
                 return
 
-            COUNT_DOWN = COUNT_DOWN - 1
+            count_down = count_down - 1
             clock.tick(60)
 
         while phase2:
@@ -797,10 +797,10 @@ async def main():
                 pygame.display.update()
                 await asyncio.sleep(0)  # Very important, and keep it 0
 
-                if not COUNT_DOWN:
+                if not count_down:
                     return
 
-                COUNT_DOWN = COUNT_DOWN - 1
+                count_down = count_down - 1
                 delay = pygame.time.get_ticks()
                 clock.tick(60)
             while typing is True:
@@ -824,10 +824,10 @@ async def main():
                 pygame.display.update()
                 await asyncio.sleep(0)  # Very important, and keep it 0
 
-                if not COUNT_DOWN:
+                if not count_down:
                     return
 
-                COUNT_DOWN = COUNT_DOWN - 1
+                count_down = count_down - 1
                 clock.tick(60)
 
 asyncio.run(main())
