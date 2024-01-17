@@ -4,8 +4,12 @@ from sys import exit
 pygame.init()
 Width, height = 1280, 720
 screen = pygame.display.set_mode((Width, height))
+icon = pygame.image.load("favicon.png")
+pygame.display.set_icon(icon)
+pygame.display.set_caption("Fetch Decode Execute GCSE LMC simulator")
 screen.fill("White")
 clock = pygame.time.Clock()
+
 
 
 async def main():
@@ -211,6 +215,17 @@ async def main():
                 memory[i] = WordToNum[temp[0]] + temp[1]
         return memory
 
+    # def export(file):
+    #     exportstring = ""
+    #     if file:
+    #         for i in range(len(file)):
+    #             exportstring += file[i]
+    #             exportstring += "%"
+    #         return "Copied into clipboard!"
+    #     else:
+    #         return "Instructions is empty..."
+
+
 
     #Fonts
     base_font = pygame.font.Font("sfx/CourierPrime-Regular.ttf", 20)
@@ -362,6 +377,7 @@ async def main():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
+                    # print(Instructions)
                     exit()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
