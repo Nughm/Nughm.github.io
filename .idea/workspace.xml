@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5b8bf5e9-e6f6-41a6-a39a-9b713e3c5eb6" name="Changes" comment="First Commit&#10;&#10;Attempt to host on github pages" />
+    <list default="true" id="5b8bf5e9-e6f6-41a6-a39a-9b713e3c5eb6" name="Changes" comment="First Commit">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -27,6 +30,12 @@
       </UrlAndAccount>
     </option>
   </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
 }</component>
@@ -46,7 +55,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/aaden/Documents/GitHub/Nughm.github.io&quot;
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/aaden/Documents/Cheltenham College/Computer Science/Mango&quot;
   }
 }</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -98,7 +107,31 @@
       <option name="project" value="LOCAL" />
       <updated>1704111649607</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="First Commit&#10;&#10;Attempt to host on github pages">
+      <option name="closed" value="true" />
+      <created>1704111908764</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1704111908764</updated>
+    </task>
+    <task id="LOCAL-00007" summary="First Commit">
+      <option name="closed" value="true" />
+      <created>1704111938545</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1704111938545</updated>
+    </task>
+    <task id="LOCAL-00008" summary="First Commit">
+      <option name="closed" value="true" />
+      <created>1704112122778</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1704112122778</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -106,6 +139,7 @@
     <MESSAGE value="First Commit&#10;&#10;Trial to host on GitHub pages" />
     <MESSAGE value="First Commit&#10;&#10;Attempt to host on gitHub pages" />
     <MESSAGE value="First Commit&#10;&#10;Attempt to host on github pages" />
-    <option name="LAST_COMMIT_MESSAGE" value="First Commit&#10;&#10;Attempt to host on github pages" />
+    <MESSAGE value="First Commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="First Commit" />
   </component>
 </project>

@@ -4,6 +4,7 @@ from sys import exit
 pygame.init()
 Width, height = 1280, 720
 screen = pygame.display.set_mode((Width, height))
+pygame.scrap.init()
 icon = pygame.image.load("favicon.png")
 pygame.display.set_icon(icon)
 pygame.display.set_caption("Fetch Decode Execute GCSE LMC simulator")
@@ -215,15 +216,17 @@ async def main():
                 memory[i] = WordToNum[temp[0]] + temp[1]
         return memory
 
-    # def export(file):
-    #     exportstring = ""
-    #     if file:
-    #         for i in range(len(file)):
-    #             exportstring += file[i]
-    #             exportstring += "%"
-    #         return "Copied into clipboard!"
-    #     else:
-    #         return "Instructions is empty..."
+    def export(file):
+        exportstring = ""
+        if file:
+            for i in range(len(file)):
+                for e in range(len(file[i])):
+                    exportstring += file[i][e]
+                exportstring += "%"
+            pygame.scrap.put_text(exportstring)
+            return True
+        else:
+            return False
 
 
 
@@ -284,7 +287,7 @@ async def main():
     #Instantiate dots
     dot1 = dot("Red")
     dot2 = dot("Red")
-
+    
     #phase1 items:
     #DisplayTyped
     Instructions = []
@@ -297,7 +300,7 @@ async def main():
     entry_surf = pygame.surface.Surface((250, 600))
     entry_surf_rect = entry_surf.get_rect(topleft = (0, 50))
     entry_surf.fill("Green")
-    guide = base_font.render("|", False, "White")
+    guide = base_font.render("|", False, "Orange")
     guide_rect = guide.get_rect(center = (0,0))
     screen.fill("White")
     entry = [[]]
@@ -354,6 +357,8 @@ async def main():
     panim_surface = panim_1
     gone = False
 
+    #export button
+
     # animation for person talking
     def personanimation(panim_index, panim_surface, panim):
         panim_index += 0.24
@@ -376,8 +381,9 @@ async def main():
         while phase1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+
+                    export(entry)
                     pygame.quit()
-                    # print(Instructions)
                     exit()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
