@@ -272,10 +272,10 @@ async def main():
     typing = False
     TempPC = PC
     pause = False
-    wait = False
+    # wait = False
     phase2 = False
     phase1 = True
-    wskip = False
+    # wskip = False
     skip = False
     delay = 0
     delay1 = 0
@@ -334,13 +334,14 @@ async def main():
     speed_surf_rect = speed_surf.get_rect(midleft = (spddown_surf_rect.midright))
     spdup_surf_rect = speed_surf.get_rect(midleft = (speed_surf_rect.midright))
     #wait
-    wait_surf = base_font.render("WAIT", True, "Black")
-    wait_surf_rect = wait_surf.get_rect(midleft = (noanim_surf_rect.midright))
+    # wait_surf = base_font.render("WAIT", True, "Black")
+    # wait_surf_rect = wait_surf.get_rect(midleft = (noanim_surf_rect.midright))
     #pause
     pause_surf = base_font.render("PAUSE", True, "Black")
     pause_surf_rect = pause_surf.get_rect(midleft = (spdup_surf_rect.midright))
+    pause_color = "Green"
     Allowed = ['0', '9', '8', '7', '6', '5', '4', '3', '2', '1', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-    #define
+    #define the person images
     panim_1 = pygame.image.load('sfx/person/p1.png').convert_alpha()
     panim_2 = pygame.image.load('sfx/person/p2.png').convert_alpha()
     panim_3 = pygame.image.load('sfx/person/p3.png').convert_alpha()
@@ -353,6 +354,9 @@ async def main():
     panim_10 = pygame.image.load('sfx/person/p10.png').convert_alpha()
 
     panim = [panim_1, panim_2, panim_3, panim_4, panim_5, panim_6, panim_7, panim_8, panim_9, panim_10]
+    for i in panim:
+        temp = pygame.transform.scale(i, (128,128))
+        i = temp
     panim_index = 0
     panim_surface = panim_1
     gone = False
@@ -430,14 +434,15 @@ async def main():
                             typing = False
                             TempPC = PC
                             pause = False
-                            wait = False
-                            wskip = False
+                            # wait = False
+                            # wskip = False
                             skip = False
                             delay = 0
                             delay1 = 0
                             inp =[]
                             output = []
-
+                    else:
+                        clicked = False
 
 
                 if event.type == pygame.MOUSEWHEEL:
@@ -455,7 +460,7 @@ async def main():
                 if event.type == pygame.KEYDOWN:
                     if clicked == True:
                         if event.key == pygame.K_BACKSPACE:
-                            if x == 0 and y != 0:
+                            if x == 0 and y != 0 and len(entry[y]) == 0:
                                 x = len(entry[y-1])
                                 entry[y-1] += entry[y]
                                 y -= 1
@@ -520,14 +525,14 @@ async def main():
             screen.blit(speed_surf, speed_surf_rect)
             pygame.draw.rect(screen, "#fed8b1", spdup_surf_rect)
             screen.blit(spdup_surf, spdup_surf_rect)
-            pygame.draw.rect(screen, "Cyan", pause_surf_rect)
+            pygame.draw.rect(screen, pause_color, pause_surf_rect)
             screen.blit(pause_surf, pause_surf_rect)
-            pygame.draw.rect(screen, "Orange", wait_surf_rect)
-            screen.blit(wait_surf, wait_surf_rect)
+            # pygame.draw.rect(screen, "Orange", wait_surf_rect)
+            # screen.blit(wait_surf, wait_surf_rect)
             Instructions = addLis(Instructions, offset1)
             (panim_index, panim_surface, panim) = personanimation(panim_index, panim_surface, panim)
-            panim_surface_rect = panim_surface.get_rect(topleft=(-1000, -1000))
-            screen.blit(panim_surface   , panim_surface_rect)
+            panim_surface_rect = panim_surface.get_rect(topleft=(675, 600))
+            screen.blit(panim_1 , panim_surface_rect)
             pygame.display.update()
             await asyncio.sleep(0)  # Very important, and keep it 0
 
@@ -555,19 +560,23 @@ async def main():
                                 dot2.speed -= 2
                                 step -= 2
                         elif pause_surf_rect.collidepoint(pygame.mouse.get_pos()):
-                            if pause is False: pause = True
-                            else: pause = False
-                        elif wait_surf_rect.collidepoint(pygame.mouse.get_pos()):
-                            if wait is False:
-                                wait = True
-                            elif wait is True:
-                                if pause is True: pause = False
-                                wait = False
-                        elif noanim_surf_rect.collidepoint(pygame.mouse.get_pos()):
-                            if wskip is False:
-                                wskip = True
-                            elif wskip is True:
-                                wskip, skip = False, False
+                            if pause is False:
+                                pause = True
+                                pause_color = "red"
+                            else:
+                                pause = False
+                                pause_color = "Green"
+                        # elif wait_surf_rect.collidepoint(pygame.mouse.get_pos()):
+                        #     if wait is False:
+                        #         wait = True
+                        #     elif wait is True:
+                        #         if pause is True: pause = False
+                        #         wait = False
+                        # elif noanim_surf_rect.collidepoint(pygame.mouse.get_pos()):
+                        #     if wskip is False:
+                        #         wskip = True
+                        #     elif wskip is True:
+                        #         wskip, skip = False, False
                     elif event.type == pygame.MOUSEWHEEL:
                         if output_surf_rect.collidepoint(pygame.mouse.get_pos()):
                             if event.y < 0 and outoffset > (len(output) - 1) * -10:
@@ -653,8 +662,8 @@ async def main():
                         if dot2.iphase == 100 and dot1.iphase == 100:
                             dot1.reset()
                             dot2.reset()
-                            if wait is True:
-                                pause = True
+                            # if wait is True:
+                            #     pause = True
                             delay = pygame.time.get_ticks()
                             delay1 = delay + 250
                             done = False
@@ -770,8 +779,8 @@ async def main():
                     if done is True and dot1.x == -10:
                         delay = pygame.time.get_ticks()
                         delay1 =  delay+250
-                        if wait is True: pause = True
-                        if wskip is True: skip = True
+                        # if wait is True: pause = True
+                        # if wskip is True: skip = True
                     elif IR == 0 or IR == 4:
                         phase1, phase2 = True, False
                         break
@@ -808,13 +817,13 @@ async def main():
                 screen.blit(speed_surf, speed_surf_rect)
                 pygame.draw.rect(screen, "#fed8b1", spdup_surf_rect)
                 screen.blit(spdup_surf, spdup_surf_rect)
-                pygame.draw.rect(screen, "Cyan", pause_surf_rect)
+                pygame.draw.rect(screen, pause_color, pause_surf_rect)
                 screen.blit(pause_surf, pause_surf_rect)
-                pygame.draw.rect(screen, "Orange", wait_surf_rect)
-                screen.blit(wait_surf, wait_surf_rect)
+                # pygame.draw.rect(screen, "Orange", wait_surf_rect)
+                # screen.blit(wait_surf, wait_surf_rect)
                 Instructions = addLis(Instructions, offset1)
                 (panim_index, panim_surface, panim)= personanimation(panim_index, panim_surface, panim)
-                panim_surface_rect = panim_surface.get_rect(topleft=(0, -0))
+                panim_surface_rect = panim_surface.get_rect(topleft=(675, 600))
                 screen.blit(panim_surface, panim_surface_rect)
                 pygame.display.update()
                 await asyncio.sleep(0)  # Very important, and keep it 0
@@ -838,9 +847,9 @@ async def main():
                         elif event.key == pygame.K_RETURN and inp:
                             dot1.value, typing, dot1.iphase = str(convstring(inp)), False, 4
                             inp = []
-                        elif event.key == pygame.K_RSHIFT:
-                            if wskip is False: wskip = True
-                            else: wksip, skip = False, False
+                        # elif event.key == pygame.K_RSHIFT:
+                            # if wskip is False: wskip = True
+                            # else: wksip, skip = False, False
                 screen.blit(input_surf, input_surf_rect)
                 screen.blit(Biggest_font.render(convstring(inp), True, "Black"), (input_surf_rect.topleft))
                 pygame.display.update()
