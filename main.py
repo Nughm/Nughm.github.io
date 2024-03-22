@@ -4,7 +4,7 @@ from sys import exit
 pygame.init()
 Width, height = 1280, 720
 screen = pygame.display.set_mode((Width, height))
-pygame.scrap.init()
+# pygame.scrap.init()
 icon = pygame.image.load("favicon.png")
 pygame.display.set_icon(icon)
 pygame.display.set_caption("Fetch Decode Execute GCSE LMC simulator")
@@ -216,17 +216,17 @@ async def main():
                 memory[i] = WordToNum[temp[0]] + temp[1]
         return memory
 
-    def export(file):
-        exportstring = ""
-        if file:
-            for i in range(len(file)):
-                for e in range(len(file[i])):
-                    exportstring += file[i][e]
-                exportstring += "%"
-            pygame.scrap.put_text(exportstring)
-            return True
-        else:
-            return False
+    # def export(file):
+    #     exportstring = ""
+    #     if file:
+    #         for i in range(len(file)):
+    #             for e in range(len(file[i])):
+    #                 exportstring += file[i][e]
+    #             exportstring += "%"
+    #         pygame.scrap.put_text(exportstring)
+    #         return True
+    #     else:
+    #         return False
 
 
 
@@ -386,7 +386,7 @@ async def main():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
 
-                    export(entry)
+                    # export(entry)
                     pygame.quit()
                     exit()
 
