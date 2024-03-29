@@ -1,10 +1,10 @@
 import asyncio
 import pygame
 from sys import exit
+import pyperclip
 pygame.init()
 Width, height = 1280, 720
 screen = pygame.display.set_mode((Width, height))
-# pygame.scrap.init()
 icon = pygame.image.load("favicon.png")
 pygame.display.set_icon(icon)
 pygame.display.set_caption("Fetch Decode Execute GCSE LMC simulator")
@@ -85,7 +85,7 @@ async def main():
             elif self.iphase == 7:
                 self.mx(565)
             elif self.iphase == 8:
-                self.my(375)
+                self.my(350)
             elif self.iphase == 9:
                 self.mx(430)
             elif self.iphase == 10:
@@ -125,11 +125,11 @@ async def main():
             screen.blit(temp, temp_rect)
         return memory
 
-    def updateCPU(PrC, InR, AdrR, AcC):
-        templis = [PrC, InR, AdrR, AcC]
-        for i in range(4):
+    def updateCPU(PrC, CiR,AcC):
+        templis = [PrC, CiR,AcC]
+        for i in range(3):
             temp = Biggest_font.render(str(templis[i]), True, "Black")
-            temp_rect = temp.get_rect(center = (430, i*50+270))
+            temp_rect = temp.get_rect(center = (430, i*75+270))
             pygame.draw.rect(screen, "White", temp_rect)
             screen.blit(temp, temp_rect)
 
@@ -160,6 +160,10 @@ async def main():
                     screen.blit(temp, (0, (i*15 - offset)+50))
             return lis
         return lis
+
+    def descdisp(lis, index):
+        temp = Base_font.render(lis[index], True, "Black")
+        screen.blit(temp, (825, 650))
     def check(lis): #checking if it is valid
         AIn = ["HLT", "ADD", "SUB", "STA", "STO", "LDA", "BRA", "BRZ", "BRP", "INP", "OUT", "OTC", "DAT"]
         Sing = ["HLT", "INP", "OUT", "OTC"]
@@ -176,7 +180,7 @@ async def main():
 
             tlis = lis[i].split(" ")
             if tlis[0].upper() not in AIn: #False if the action is not valid
-                return (f"Invalid action \n or no action \n in line {i+1}", False)
+                return (f"Invalid\naction\n or no action\n in line {i+1}", False)
         for i in range(len(labelsloc)):
             if len(str(labelsloc[i])) == 1:
                 labelsloc[i] = "0" + labelsloc[i]
@@ -189,9 +193,11 @@ async def main():
             elif tlis[0].upper() in Sing:
                 lis[i] = lis[i][:len(tlis[0])]
                 tlis.pop(1)
+            if len(tlis) > 1 and tlis[1].isnumeric() and int(tlis[1]) > 99:
+                return("Memory\naddress\nout\nof\nrange", False)
             if tlis[0].upper() not in Sing and tlis[1].isnumeric() is False:
                 if tlis[1] not in labels:
-                    return (f"Label '{tlis[1]}' \n is \n not defined.", False)
+                    return ("A label\n is\n not\ndefined.", False)
                 else:
                     lis[i] = lis[i][:len(tlis[0])]+f" {labelsloc[labels.index(tlis[1])]}"
             if tlis[0].upper() not in Sing and tlis[1].isnumeric() and len(tlis[1]) == 1:
@@ -216,19 +222,21 @@ async def main():
                 memory[i] = WordToNum[temp[0]] + temp[1]
         return memory
 
-    # def export(file):
-    #     exportstring = ""
-    #     if file:
-    #         for i in range(len(file)):
-    #             for e in range(len(file[i])):
-    #                 exportstring += file[i][e]
-    #             exportstring += "%"
-    #         pygame.scrap.put_text(exportstring)
-    #         return True
-    #     else:
-    #         return False
+    def export(file):
+        exportstring = ""
+        if file:
+            for i in range(len(file)):
+                for e in range(len(file[i])):
+                    exportstring += file[i][e]
+                exportstring += "%"
+            pyperclip.copy(exportstring)
+            return True
+        else:
+            return False
 
-
+    def dispCIR(CiR):
+        temp = Biggest_font.render(str('CiR'), True, "Black")
+        temp_rect = temp.get_rect(midleft = (400,345))
 
     #Fonts
     base_font = pygame.font.Font("sfx/CourierPrime-Regular.ttf", 20)
@@ -238,7 +246,7 @@ async def main():
     Biggest_font = pygame.font.Font("sfx/Pixeltype.ttf", 50)
 
     #CPU surface
-    cpu_surf = pygame.image.load("sfx/CPU.png").convert_alpha()
+    cpu_surf = pygame.image.load("sfx/CPU1.png").convert_alpha()
     cpu_surf_rect = cpu_surf.get_rect(topleft=(395, 250))
 
     #Wire surface
@@ -249,6 +257,9 @@ async def main():
     grid_surf = pygame.image.load("sfx/grid.png").convert_alpha()
     grid_surf_rect = grid_surf.get_rect(topright = (Width, 0))
 
+    #textbox surface
+    text_surf = pygame.image.load("sfx/text.png").convert_alpha()
+    text_surf_rect = text_surf.get_rect(bottomright = (Width, height))
     #output surface
     output_surf = pygame.Surface((100, 200))
     output_surf.fill("#CBC3E3")
@@ -264,11 +275,13 @@ async def main():
 
     #Text vars
     memory = ["000" for i in range(100)]
-    PC, IR, ADR, ACC = 0, 0, 0, 0
+    PC, IR, ADR, ACC, CIR = 0, 0, 0, 0, 0
+
+    CIR_surf = Bigger_font.render("current\ninstruction\nregister", False, "Black")
+    CIR_surf_rect = CIR_surf.get_rect(topleft = (480,320))
 
     #Changable vars
     done = True
-    step = 2
     typing = False
     TempPC = PC
     pause = False
@@ -280,10 +293,13 @@ async def main():
     delay = 0
     delay1 = 0
     Run = False
+    diaindex = 0
 
     #List of dialougue
-    dialouge = ["The Program Counter has the memory address of\nthe instruction to be executed next.", "The address is copied to the MAR from the Program Counter", "" ]
-
+    p1dindex = 0
+    phase1dialouge = ["Type code into orange box or select a premade one,\nthen press submit and Run Code\n(GCSE students please select a premade program)", "ACC too big"]
+    dialouge = ["1. Fetch: The value in the Program Counter is the \ninstruction to be executed next. This is copied\n to the MAR (Not in simulation)", "1. Fetch: The value in the Program Counter is the \ninstruction to be executed next. This is copied\n to the MAR (Not in simulation)", "2. Fetch: A signal is sent across the address bus\n(the wire) to the target location in RAM","3. Fetch: Program Counter incremented by one.", "4. Fetch: The instruction (data) is sent back along the\ndata bus (the wire) to the MDR", "5. Fetch: MDR's instruction copied to CIR,\nwhich I have split to Address Register\nand Instruction Register", "6. Decode/Execute: Control Unit decodes\ninstruction and executes it.\n(No further detail needed for the exam)"]
+    typedialouge = ["Enter an integer (Just type a number on your keyboard)"]
     #Instantiate dots
     dot1 = dot("Red")
     dot2 = dot("Red")
@@ -299,8 +315,8 @@ async def main():
     #Display entry
     entry_surf = pygame.surface.Surface((250, 600))
     entry_surf_rect = entry_surf.get_rect(topleft = (0, 50))
-    entry_surf.fill("Green")
-    guide = base_font.render("|", False, "Orange")
+    entry_surf.fill("Orange")
+    guide = base_font.render("|", False, "Black")
     guide_rect = guide.get_rect(center = (0,0))
     screen.fill("White")
     entry = [[]]
@@ -320,10 +336,10 @@ async def main():
     #reset
     reset_surf = base_font.render("RESET", True, "Black")
     reset_surf_rect = reset_surf.get_rect(bottomleft = (submit_surf_rect.topleft))
-
+    reset_color = "Red"
     #no animation
-    noanim_surf = base_font.render("Hyper", True, "Black")
-    noanim_surf_rect = reset_surf.get_rect(midleft = (reset_surf_rect.midright))
+    # noanim_surf = base_font.render("Hyper", True, "Black")
+    # noanim_surf_rect = reset_surf.get_rect(midleft = (reset_surf_rect.midright))
 
     #speed up down
     spddown_surf = base_font.render("<<", True, "Black")
@@ -333,6 +349,8 @@ async def main():
     spddown_surf_rect = spddown_surf.get_rect(bottomleft = (reset_surf_rect.topleft))
     speed_surf_rect = speed_surf.get_rect(midleft = (spddown_surf_rect.midright))
     spdup_surf_rect = speed_surf.get_rect(midleft = (speed_surf_rect.midright))
+    # export button
+
     #wait
     # wait_surf = base_font.render("WAIT", True, "Black")
     # wait_surf_rect = wait_surf.get_rect(midleft = (noanim_surf_rect.midright))
@@ -361,8 +379,6 @@ async def main():
     panim_surface = panim_1
     gone = False
 
-    #export button
-
     # animation for person talking
     def personanimation(panim_index, panim_surface, panim):
         panim_index += 0.24
@@ -380,17 +396,18 @@ async def main():
     pygame.draw.line(screen, "Gray", (430,output_surf_rect.bottom), (430,cpu_surf_rect.top), 30)
     pygame.draw.line(screen, "Gray", (input_surf_rect.midbottom), (input_surf_rect.midbottom[0], cpu_surf_rect.top), 30)
     memory = blitmem(memory)
-    updateCPU(PC,IR, ADR, ACC)
+    updateCPU(PC,CIR,ACC)
     while True:
         while phase1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
 
-                    # export(entry)
+                    export(entry)
                     pygame.quit()
                     exit()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
+                    print(pygame.mouse.get_pos())#825, 650
                     if submit_surf_rect.collidepoint(pygame.mouse.get_pos()):
                         Temp2 = []
                         for i in entry:
@@ -424,13 +441,13 @@ async def main():
                     elif clear_surf_rect.collidepoint(x, y):
                         Run = False
                         entry = [[]]
+                        x,y = 0,0
                     elif run_surf_rect.collidepoint(x, y):
                         if Run is True:
                             memory = convass(Instructions)
                             phase1, phase2 = False, True
                             PC, IR, ADR, ACC = 0, 0, 0, 0
                             done = True
-                            step = 2
                             typing = False
                             TempPC = PC
                             pause = False
@@ -470,7 +487,7 @@ async def main():
                                 x -= 1
 
                         elif event.key == pygame.K_RETURN:
-                            if len(entry) < 40:
+                            if len(entry) < 39:
                                 entry.insert(y + 1, entry[y][x:])
                                 entry[y] = entry[y][:x]
                                 y += 1
@@ -498,7 +515,7 @@ async def main():
                             else:
                                 x -= 1
 
-                        elif x < 19:
+                        elif len(entry[y]) < 19:
                             if event.key == pygame.K_SPACE or event.unicode.lower() in Allowed:
                                 entry[y].insert(x, event.unicode)
                                 x += 1
@@ -509,16 +526,16 @@ async def main():
                 guide_rect.center = (x * 12, (y * 15 - offset) + 60)
                 screen.blit(guide, guide_rect)
             screen.blit(dispt_surface, dispt_surface_rect)
-            pygame.draw.rect(screen, "Green", submit_surf_rect)
+            pygame.draw.rect(screen, "orange", submit_surf_rect)
             screen.blit(submit_surf, (submit_surf_rect))
             pygame.draw.rect(screen, "Red", clear_surf_rect)
             screen.blit(clear_surf, (clear_surf_rect))
             pygame.draw.rect(screen, "Cyan", run_surf_rect)
             screen.blit(run_surf, (run_surf_rect))
-            pygame.draw.rect(screen, "Red", reset_surf_rect)
+            pygame.draw.rect(screen, reset_color, reset_surf_rect)
             screen.blit(reset_surf, reset_surf_rect)
-            pygame.draw.rect(screen, "Cyan", noanim_surf_rect)
-            screen.blit(noanim_surf, noanim_surf_rect)
+            # pygame.draw.rect(screen, "Cyan", noanim_surf_rect)
+            # screen.blit(noanim_surf, noanim_surf_rect)
             pygame.draw.rect(screen, "#fed8b1", spddown_surf_rect)
             screen.blit(spddown_surf, spddown_surf_rect)
             pygame.draw.rect(screen, "orange", speed_surf_rect)
@@ -527,12 +544,15 @@ async def main():
             screen.blit(spdup_surf, spdup_surf_rect)
             pygame.draw.rect(screen, pause_color, pause_surf_rect)
             screen.blit(pause_surf, pause_surf_rect)
+            screen.blit(text_surf, text_surf_rect)
             # pygame.draw.rect(screen, "Orange", wait_surf_rect)
             # screen.blit(wait_surf, wait_surf_rect)
             Instructions = addLis(Instructions, offset1)
             (panim_index, panim_surface, panim) = personanimation(panim_index, panim_surface, panim)
             panim_surface_rect = panim_surface.get_rect(topleft=(675, 600))
             screen.blit(panim_1 , panim_surface_rect)
+            descdisp(phase1dialouge, p1dindex)
+            screen.blit(CIR_surf, CIR_surf_rect)
             pygame.display.update()
             await asyncio.sleep(0)  # Very important, and keep it 0
 
@@ -549,23 +569,27 @@ async def main():
                         pygame.quit()
                         exit()
                     elif event.type == pygame.MOUSEBUTTONDOWN:
-                        if spdup_surf_rect.collidepoint(pygame.mouse.get_pos()):
+                        (x,y) = pygame.mouse.get_pos()
+                        if spdup_surf_rect.collidepoint(x,y):
                             if dot1.speed < 50:
-                                dot1.speed += 2
-                                dot2.speed += 2
-                                step += 2
-                        elif spddown_surf_rect.collidepoint(pygame.mouse.get_pos()):
+                                dot1.speed += 4
+                                dot2.speed += 4
+                        elif spddown_surf_rect.collidepoint(x,y):
                             if dot1.speed != 2:
-                                dot1.speed -= 2
-                                dot2.speed -= 2
-                                step -= 2
-                        elif pause_surf_rect.collidepoint(pygame.mouse.get_pos()):
+                                dot1.speed -= 4
+                                dot2.speed -= 4
+                        elif pause_surf_rect.collidepoint(x,y):
                             if pause is False:
                                 pause = True
-                                pause_color = "red"
+                                pause_color, reset_color = "Red", "Green"
                             else:
                                 pause = False
-                                pause_color = "Green"
+                                pause_color, reset_color = "Green", 'Red'
+                        elif reset_surf_rect.collidepoint(x,y) and pause is True:
+                            done, pause_color, reset_color, p1dindex = True, "Green", "Red",0
+                            dot1.reset()
+                            dot2.reset()
+                            phase1, phase2, typing = True, False, True
                         # elif wait_surf_rect.collidepoint(pygame.mouse.get_pos()):
                         #     if wait is False:
                         #         wait = True
@@ -584,46 +608,47 @@ async def main():
                             elif event.y > 0 and outoffset < 0:
                                 outoffset += 20
                 if 0 > PC > 99 or abs(ACC) >= 1000:
+                    p1dindex = 1
                     phase1, phase2 = True, False
                     break
-                if skip is True and pause is False:
-                    IR = memory[PC][0]
-                    ADR = memory[PC][1:]
-                    PC += 1
-                    if IR == '0':
-                        phase1, phase2 = True, False
-                        break
-                    elif IR == "1":
-                        ACC += int(memory[int(ADR)])
-                    elif IR == "2":
-                        ACC -= int(memory[int(ADR)])
-                    elif IR == "3":
-                        memory[int(ADR)] = (3 - len(str(ADR))) * "0" + str(ACC)
-                    elif IR == "5":
-                        ACC = int(memory[int(ADR)])
-                    elif IR == "6":
-                        PC = int(ADR)
-                    elif IR == "7":
-                        if ACC == 0:
-                            PC = int(ADR)
-                    elif IR == "8":
-                        if ACC >= 0:
-                            PC = int(ADR)
-                    elif IR == "9":
-                        if ADR == "01":
-                            if typing is False:
-                                typing = True
-                            else:
-                                ACC = int(dot1.value)
-                        elif ADR == "02":
-                            output.append(str(ACC))
-                        elif ADR == "22":
-                            if ACC > 0:
-                                output.append(chr(ACC))
-                        else:
-                            phase1, phase2 = True, False
-                    else:
-                        phase1, phase2 = True, False
+                # if skip is True and pause is False:
+                #     IR = memory[PC][0]
+                #     ADR = memory[PC][1:]
+                #     PC += 1
+                #     if IR == '0':
+                #         phase1, phase2 = True, False
+                #         break
+                #     elif IR == "1":
+                #         ACC += int(memory[int(ADR)])
+                #     elif IR == "2":
+                #         ACC -= int(memory[int(ADR)])
+                #     elif IR == "3":
+                #         memory[int(ADR)] = (3 - len(str(ADR))) * "0" + str(ACC)
+                #     elif IR == "5":
+                #         ACC = int(memory[int(ADR)])
+                #     elif IR == "6":
+                #         PC = int(ADR)
+                #     elif IR == "7":
+                #         if ACC == 0:
+                #             PC = int(ADR)
+                #     elif IR == "8":
+                #         if ACC >= 0:
+                #             PC = int(ADR)
+                #     elif IR == "9":
+                #         if ADR == "01":
+                #             if typing is False:
+                #                 typing = True
+                #             else:
+                #                 ACC = int(dot1.value)
+                #         elif ADR == "02":
+                #             output.append(str(ACC))
+                #         elif ADR == "22":
+                #             if ACC > 0:
+                #                 output.append(chr(ACC))
+                #         else:
+                #             phase1, phase2 = True, False
+                #     else:
+                #         phase1, phase2 = True, False
 
                 elif done is True and pause is False and delay >= delay1: #Fetch cycle
                     if dot1.phase == 0:
@@ -633,18 +658,25 @@ async def main():
                         dot1.value, dot2.value = str(PC), str(PC)
                         dot1.phase, dot2.phase = (1, 1)
                     elif dot1.phase == 1:
+                        diaindex = 0
                         dot1.iphase, dot2.iphase = -1, -1
                         dot1.travelmem()
                         dot2.travelmem()
                         if dot1.iphase == 0:
+                            diaindex = 2
                             dot1.phase, dot2.phase = 2, 2
                             dot1.target = TempPC
                     elif dot1.phase == 2:
                         dot1.travelmem()
                         if dot1.iphase == 5:
+                            diaindex = 4
                             dot1.value = memory[TempPC]
                             dot1.color = "Cyan"
+                        elif dot1.iphase == 8:
+                            diaindex = 5
                         elif dot1.iphase == 10:
+                            diaindex = 5
+                            CIR = int(memory[TempPC])
                             ADR = int(memory[TempPC][1:])
                         elif dot1.iphase == 100:
                             IR = int(memory[TempPC][:1])
@@ -654,11 +686,13 @@ async def main():
                             dot2.value = str(PC + 1)
                             dot2.color = "Cyan"
                         elif dot2.iphase == 2:
+                            diaindex = 3
                             dot2.value = str(PC + 1)
                             dot2.color = "Cyan"
                         elif dot2.iphase == 100:
                             PC = int(dot2.value)
                             dot2.setcoord(-10, -10)
+                            if diaindex == 3: diaindex = 2
                         if dot2.iphase == 100 and dot1.iphase == 100:
                             dot1.reset()
                             dot2.reset()
@@ -666,6 +700,7 @@ async def main():
                             #     pause = True
                             delay = pygame.time.get_ticks()
                             delay1 = delay + 250
+                            diaindex = 6
                             done = False
                 elif pause is False and done is False and delay >= delay1:
                     if IR == 1 or IR == 2 or IR  == 5: #ADD, SUB, LDA
@@ -782,6 +817,7 @@ async def main():
                         # if wait is True: pause = True
                         # if wskip is True: skip = True
                     elif IR == 0 or IR == 4:
+                        p1dindex = 0
                         phase1, phase2 = True, False
                         break
 
@@ -795,7 +831,7 @@ async def main():
                 pygame.draw.line(screen, "Gray", (430,output_surf_rect.bottom), (430,cpu_surf_rect.top), 30)
                 pygame.draw.line(screen, "Gray", (input_surf_rect.midbottom), (input_surf_rect.midbottom[0], cpu_surf_rect.top), 30)
                 memory = blitmem(memory)
-                updateCPU(PC, IR, ADR, ACC)
+                updateCPU(PC, CIR,ACC)
                 output = scrollout(output, outoffset, 20, output_surf_rect, Bigger_font)
                 dot1.update()
                 dot2.update()
@@ -807,10 +843,10 @@ async def main():
                 screen.blit(clear_surf, (clear_surf_rect))
                 pygame.draw.rect(screen, "Cyan", run_surf_rect)
                 screen.blit(run_surf, (run_surf_rect))
-                pygame.draw.rect(screen, "Red", reset_surf_rect)
+                pygame.draw.rect(screen, reset_color, reset_surf_rect)
                 screen.blit(reset_surf, reset_surf_rect)
-                pygame.draw.rect(screen, "Cyan", noanim_surf_rect)
-                screen.blit(noanim_surf, noanim_surf_rect)
+                # pygame.draw.rect(screen, "Cyan", noanim_surf_rect)
+                # screen.blit(noanim_surf, noanim_surf_rect)
                 pygame.draw.rect(screen, "#fed8b1", spddown_surf_rect)
                 screen.blit(spddown_surf, spddown_surf_rect)
                 pygame.draw.rect(screen, "orange", speed_surf_rect)
@@ -819,12 +855,15 @@ async def main():
                 screen.blit(spdup_surf, spdup_surf_rect)
                 pygame.draw.rect(screen, pause_color, pause_surf_rect)
                 screen.blit(pause_surf, pause_surf_rect)
+                screen.blit(text_surf, text_surf_rect)
                 # pygame.draw.rect(screen, "Orange", wait_surf_rect)
                 # screen.blit(wait_surf, wait_surf_rect)
                 Instructions = addLis(Instructions, offset1)
                 (panim_index, panim_surface, panim)= personanimation(panim_index, panim_surface, panim)
                 panim_surface_rect = panim_surface.get_rect(topleft=(675, 600))
                 screen.blit(panim_surface, panim_surface_rect)
+                descdisp(dialouge, diaindex)
+                screen.blit(CIR_surf, CIR_surf_rect)
                 pygame.display.update()
                 await asyncio.sleep(0)  # Very important, and keep it 0
 
@@ -835,6 +874,7 @@ async def main():
                 delay = pygame.time.get_ticks()
                 clock.tick(60)
             while typing is True:
+                if phase1 is True: break
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         pygame.quit()
@@ -852,6 +892,10 @@ async def main():
                             # else: wksip, skip = False, False
                 screen.blit(input_surf, input_surf_rect)
                 screen.blit(Biggest_font.render(convstring(inp), True, "Black"), (input_surf_rect.topleft))
+                screen.blit(text_surf, text_surf_rect)
+                descdisp(typedialouge, 0)
+                screen.blit(CIR_surf, CIR_surf_rect)
+
                 pygame.display.update()
                 await asyncio.sleep(0)  # Very important, and keep it 0
 
