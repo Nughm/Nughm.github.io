@@ -4,25 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5b8bf5e9-e6f6-41a6-a39a-9b713e3c5eb6" name="Changes" comment="First Commit">
-      <change afterPath="$PROJECT_DIR$/sfx/vntutorial/0.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sfx/vntutorial/1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sfx/vntutorial/2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sfx/vntutorial/3.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sfx/vntutorial/4.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sfx/vntutorial/5.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sfx/vntutorial/6.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sfx/vntutorial/7.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sfx/vntutorial/8.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sfx/vntutorial/9.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sfx/vntutorial/base.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sfx/wire1.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sfx/CPU1.png" beforeDir="false" afterPath="$PROJECT_DIR$/sfx/CPU1.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sfx/grid.png" beforeDir="false" afterPath="$PROJECT_DIR$/sfx/grid.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sfx/wire.png" beforeDir="false" afterPath="$PROJECT_DIR$/sfx/wire.png" afterDir="false" />
-    </list>
+    <list default="true" id="5b8bf5e9-e6f6-41a6-a39a-9b713e3c5eb6" name="Changes" comment="First Commit" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
