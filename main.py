@@ -327,7 +327,9 @@ async def main():
     phase1dialouge = ["Type code into orange box or select a premade one,\nthen press submit and Run Code\n(GCSE students please select a premade program)", "ACC too big"]
 
     dialouge = ["1. Fetch: The value in the Program Counter is the \ninstruction to be executed next. This is copied\n to the MAR", "1. Fetch: The value in the Program Counter is the \ninstruction to be executed next. This is copied\n to the MAR", "2. Fetch: A signal is sent across the address bus\n(the wire) to the target location in RAM\n(The value in the MAR)","3. Fetch: Program Counter incremented by one.", "4. Fetch: The instruction (data) is sent back along the\ndata bus (the wire) to the MDR", "5. Fetch: MDR's instruction copied to CIR", "6. Decode/Execute: Control Unit decodes\ninstruction and executes it.\n(No further detail needed for the exam)"]
-    typedialouge = ["Enter an integer (Just type a number on your\nkeyboard)"]
+    aqadialouge = ["1. Fetch: The next instruction or data\nis fetched from RAM (main memory)","1. Fetch: The next instruction or data\nis fetched from RAM (main memory)","1. Fetch: The next instruction or data\nis fetched from RAM (main memory)","1. Fetch: The next instruction or data\nis fetched from RAM (main memory)","2. Fetch: The instruction is brought back to the CPU","2. Fetch: The instruction is brought back to the CPU", "3. Decode/Execute: CPU works out what is required\nfrom the instruction \n,then the CPU carries out the instruction that was\n                                                    fetched"]
+    defdialouge = dialouge
+    typedialouge = ["Enter an integer (Just type a number on your\nkeyboard) and press enter"]
     VNdialouge = ["The von neumann architecture was the\nfirst architecture that had the stored\nprogram concept. (Left/Right click for forward /\n                                                         backwards)", "The Von Neumann Architecture's distinction\nis that instructions and data are stored\nin main memory", "The Program Counter contains the next\ninstruction to be executed.", "The ALU performs arithmetic and logical operations\non data.(Arithmetic Logic UNIT)", "The Accumulator stores the results of the ALU\nor DATA fetched from main memory", "The Current instruction register\nstores the instruction FETCHED from memory\nduring the fetch cycle","The MAR, Memory address register, contains\nthe LOCATION (address) in RAM that data is to be read\nor written to (like a target).", "The MDR, Memory data register,\ncontains DATA (OR INSTRUCTIONS)\nthat are to be written to or has been read from RAM.", "Buses connect two or more parts of the CPU together.", "I have displayed the address and data bus as one\nentity, but they are seperate.", "The data bus goes to and from memory,\nfrom the MDR to RAM and vice versa.","The address bus goes from to memory only.", "In this simulation I have represented\nbinary signals as dots.", "Red symbolises going to memory.", "Blue symbolises leaving memory.\n(Press the VN Explanation button to exit)"]
     #Instantiate dots
     dot1 = dot("Green")
@@ -400,9 +402,18 @@ async def main():
     vn_base = pygame.image.load("sfx/vntutorial/base.png").convert_alpha()
     #exam board
     edocr_surf = Bigger_font.render("OCR/Edexcel", False, "Black")
-    edocr_surf_rect = edocr_surf.get_rect(center = (450,700))
+    edocr_surf_rect = edocr_surf.get_rect(center = (120,30))
     aqacr_surf = Bigger_font.render("AQA", False, "Black")
+    def_examsurf = edocr_surf
+    examboard_lbutton = Bigger_font.render("<", False, "Black")
+    examboard_rbutton = Bigger_font.render(">", False, "Black")
+    examboard_lbutton_rect = examboard_lbutton.get_rect(midright = edocr_surf_rect.midleft)
+    examboard_rbutton_rect = examboard_rbutton.get_rect(midleft = edocr_surf_rect.midright)
+    example_data = [['l', 'd', 'a', ' ', 'o', 'n', 'e'], ['l', 'o', 'o', 'p', ' ', 'o', 'u', 't'], ['s', 'u', 'b', ' ', 'u', 'n'], ['b', 'r', 'p', ' ', 'l', 'o', 'o', 'p'], ['h', 'l', 't'], ['o', 'n', 'e', ' ', 'd', 'a', 't', ' ', '1', '0'], ['u', 'n', ' ', 'd', 'a', 't', ' ', '1']]
 
+    #example
+    example_surf = base_font.render("EXAMPLE PROGRAM", True, "Black")
+    example_surf_rect = example_surf.get_rect(midleft = reset_surf_rect.midright)
     #pause
     pause_surf = base_font.render("PAUSE", True, "Black")
     pause_surf_rect = pause_surf.get_rect(midleft = (spdup_surf_rect.midright))
@@ -452,15 +463,15 @@ async def main():
         while phase1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    export(entry)
-                    # screenshot = pygame.Surface((880, 720))
-                    # screenshot.blit(screen, (-395,0))
+                    # export(entry)
+                    # screenshot = pygame.Surface((645, 610))
+                    # screenshot.blit(screen, (-635,0))
                     # pygame.image.save(screenshot, "screenshot.jpg")
                     pygame.quit()
                     exit()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    print(pygame.mouse.get_pos())#825, 650
+                    # print(pygame.mouse.get_pos())#825, 650
                     if submit_surf_rect.collidepoint(pygame.mouse.get_pos()):
                         Temp2 = []
                         for i in entry:
@@ -514,6 +525,15 @@ async def main():
                     elif vn_surf_rect.collidepoint((x,y)):
                         phase1, phase3 = False, True
                         vn_color = "Green"
+                    elif examboard_rbutton_rect.collidepoint((x,y)) or examboard_lbutton_rect.collidepoint((x,y)):
+                        if defdialouge == dialouge:
+                            def_examsurf = aqacr_surf
+                            defdialouge = aqadialouge
+                        else:
+                            def_examsurf = edocr_surf
+                            defdialouge = dialouge
+                    elif example_surf_rect.collidepoint((x,y)):
+                        entry = example_data
                     else:
                         clicked = False
 
@@ -614,6 +634,15 @@ async def main():
             screen.blit(CIR_surf, CIR_surf_rect)
             screen.blit(MAR_surf, MAR_surf_rect)
             screen.blit(MDR_surf, MDR_surf_rect)
+            pygame.draw.rect(screen, "Cyan", edocr_surf_rect)
+            screen.blit(def_examsurf, edocr_surf_rect)
+            pygame.draw.rect(screen, "Green", examboard_lbutton_rect)
+            pygame.draw.rect(screen, "Green", examboard_rbutton_rect)
+            screen.blit(examboard_rbutton, examboard_rbutton_rect)
+            screen.blit(examboard_lbutton, examboard_lbutton_rect)
+            pygame.draw.rect(screen, "Magenta", example_surf_rect)
+            screen.blit(example_surf, example_surf_rect)
+            # screen
             pygame.display.update()
             await asyncio.sleep(0)  # Very important, and keep it 0
 
@@ -651,6 +680,13 @@ async def main():
                             dot1.reset()
                             dot2.reset()
                             phase1, phase2, typing = True, False, True
+                        elif examboard_rbutton_rect.collidepoint((x, y)) or examboard_lbutton_rect.collidepoint((x, y)):
+                            if defdialouge == dialouge:
+                                def_examsurf = aqacr_surf
+                                defdialouge = aqadialouge
+                            else:
+                                def_examsurf = edocr_surf
+                                defdialouge = dialouge
                         # elif wait_surf_rect.collidepoint(pygame.mouse.get_pos()):
                         #     if wait is False:
                         #         wait = True
@@ -919,7 +955,7 @@ async def main():
                 dot2.update()
                 screen.blit(entry_surf, entry_surf_rect)
                 screen.blit(dispt_surface, dispt_surface_rect)
-                pygame.draw.rect(screen, "Green", submit_surf_rect)
+                pygame.draw.rect(screen, "orange", submit_surf_rect)
                 screen.blit(submit_surf, (submit_surf_rect))
                 pygame.draw.rect(screen, "Red", clear_surf_rect)
                 screen.blit(clear_surf, (clear_surf_rect))
@@ -944,7 +980,13 @@ async def main():
                 (panim_index, panim_surface, panim)= personanimation(panim_index, panim_surface, panim)
                 panim_surface_rect = panim_surface.get_rect(topleft=(675, 600))
                 screen.blit(panim_surface, panim_surface_rect)
-                descdisp(dialouge, diaindex)
+                descdisp(defdialouge, diaindex)
+                pygame.draw.rect(screen, "Cyan", edocr_surf_rect)
+                screen.blit(def_examsurf, edocr_surf_rect)
+                pygame.draw.rect(screen, "Green", examboard_lbutton_rect)
+                pygame.draw.rect(screen, "Green", examboard_rbutton_rect)
+                screen.blit(examboard_rbutton, examboard_rbutton_rect)
+                screen.blit(examboard_lbutton, examboard_lbutton_rect)
                 pygame.display.update()
                 await asyncio.sleep(0)  # Very important, and keep it 0
 
@@ -982,6 +1024,13 @@ async def main():
                             dot1.reset()
                             dot2.reset()
                             phase1, phase2, typing = True, False, True
+                        elif examboard_rbutton_rect.collidepoint((x, y)) or examboard_lbutton_rect.collidepoint((x, y)):
+                            if defdialouge == dialouge:
+                                def_examsurf = aqacr_surf
+                                defdialouge = aqadialouge
+                            else:
+                                def_examsurf = edocr_surf
+                                defdialouge = dialouge
                         # elif event.key == pygame.K_RSHIFT:
                             # if wskip is False: wskip = True
                             # else: wksip, skip = False, False
@@ -998,6 +1047,12 @@ async def main():
                 screen.blit(pause_surf, pause_surf_rect)
                 screen.blit(pause_surf, pause_surf_rect)
                 screen.blit(reset_surf, reset_surf_rect)
+                pygame.draw.rect(screen, "Cyan", edocr_surf_rect)
+                screen.blit(def_examsurf, edocr_surf_rect)
+                pygame.draw.rect(screen, "Green", examboard_lbutton_rect)
+                pygame.draw.rect(screen, "Green", examboard_rbutton_rect)
+                screen.blit(examboard_rbutton, examboard_rbutton_rect)
+                screen.blit(examboard_lbutton, examboard_lbutton_rect)
                 pygame.display.update()
                 await asyncio.sleep(0)  # Very important, and keep it 0
 
